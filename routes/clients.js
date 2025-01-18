@@ -31,7 +31,7 @@ clientRouter.post('/clients', async (req, res) => {
     try {
         const connection = await getConnection()
         const {nom, adress, email, telephone} = req.body;
-        const [result] = await connection.query('INSERT INTO clients(nom, adress, email, telephone) VALUES (?, ?, ?, ?)', [nom, adress, email, telephone]);
+        const [result] = await connection.query(`INSERT INTO clients(nom, adress, email, telephone) VALUES ('${nom}', '${adress}', '${email}', '${telephone}`);
         await connection.end();
         res.status(201).json({
             id: result.insertId,
@@ -49,7 +49,7 @@ clientRouter.put('/clients/:id_client', async(req, res) => {
         const connection = await getConnection()
         const {nom, adress, email, telephone} = req.body;
         const {id_client} = req.params;
-        const [result] = await connection.query("UPDATE clients SET nom = ?, adress = ?, email = ?, telephone = ? WHERE id_client = ?", [nom, adress, email, telephone, id_client]);
+        const [result] = await connection.query(`UPDATE clients SET nom = '${nom}', adress = '${adress}', email = '${email}', telephone = '${telephone}' WHERE id_client = ${id_client}`);
         await connection.end();
         res.status(200).json({
             message: 'Client mise à jour avec succès !'
@@ -65,7 +65,7 @@ clientRouter.delete('/clients/:id_client', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id_client} = req.params;
-        const [result] = await connection.query("DELETE FROM clients WHERE id_client = ?", [id_client]);
+        const [result] = await connection.query(`DELETE FROM clients WHERE id_client = ${id_client}`);
         await connection.end();
         res.status(200).json({
             message: 'Categories supprimé avec succès !'

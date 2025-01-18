@@ -19,7 +19,7 @@ produitRouter.post('/produits', async (req, res) => {
     try {
         const connection = await getConnection()
         const {nom, reference_produit, prix_unitaire, quantite_stock, id_categorie} = req.body;
-        const [result] = await connection.query('INSERT INTO produits(nom, reference_produit, prix_unitaire, quantite_stock, id_categorie) VALUES (?, ?, ?, ?, ?)', [nom, reference_produit, prix_unitaire, quantite_stock, id_categorie]);
+        const [result] = await connection.query(`INSERT INTO produits(nom, reference_produit, prix_unitaire, quantite_stock, id_categorie) VALUES ('${nom}', '${reference_produit}', '${prix_unitaire}', '${quantite_stock}', '${id_categorie}')`);
         await connection.end();
         res.status(201).json({
             id: result.insertId,
@@ -37,7 +37,7 @@ produitRouter.put('/produits/:id_produits', async(req, res) => {
         const connection = await getConnection()
         const {nom, reference_produit, prix_unitaire, quantite_stock, id_categorie} = req.body;
         const {id_produits} = req.params;
-        const [result] = await connection.query("UPDATE produits SET nom = ?, reference_produit = ?, prix_unitaire = ?, quantite_stock = ?, id_categorie = ? WHERE id_produits = ?", [nom, reference_produit, prix_unitaire, quantite_stock, id_categorie, id_produits]);
+        const [result] = await connection.query(`UPDATE produits SET nom = '${nom}', reference_produit = '${reference_produit}', prix_unitaire = '${prix_unitaire}', quantite_stock = '${quantite_stock}', id_categorie = '${id_categorie}' WHERE id_produits = '${id_produits}'`);
         await connection.end();
         res.status(200).json({
             message: 'Produit mise à jour avec succès !'
@@ -53,7 +53,7 @@ produitRouter.delete('/produits/:id_produits', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id_produits} = req.params;
-        const [result] = await connection.query("DELETE FROM produits WHERE id_produits = ?", [id_produits]);
+        const [result] = await connection.query(`DELETE FROM produits WHERE id_produits = '${id_produits}'`);
         await connection.end();
         res.status(200).json({
             message: 'Produit supprimé avec succès !'
