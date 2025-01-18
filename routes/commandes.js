@@ -15,6 +15,18 @@ commandeRouter.get('/commandes', async (req, res) => {
     }
 })
 
+commandeRouter.get('/commandes/lignes', async (req, res) => {
+    try {
+        const connection = await getConnection()
+        const [rows] = await connection.query('SELECT c.id_commandes, c.date_time, c.prix_total, lc.id AS ligne_id, lc.id_produits, lc.quantite, p.nom AS produit_nom, p.reference_produit, p.prix_unitaire FROM commandes c LEFT JOIN lignes_commande lc ON c.id_commandes = lc.id_commandes LEFT JOIN produits p ON lc.id_produits = p.id_produits');
+        await connection.end();
+        res.json(rows)
+    } catch (error) {
+        console.error("Erreur lors de la récupération des commandes :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+})
+
 commandeRouter.post('/commandes', async (req, res) => {
     try {
         const connection = await getConnection()
