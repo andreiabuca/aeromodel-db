@@ -6,7 +6,7 @@ const commandeRouter = Router()
 commandeRouter.get('/commandes', async (req, res) => {
     try {
         const connection = await getConnection()
-        const [rows] = await connection.query('SELECT * FROM commandes');
+        const [rows] = await connection.execute('SELECT * FROM commandes');
         await connection.end();
         res.json(rows)
     } catch (error) {
@@ -18,7 +18,7 @@ commandeRouter.get('/commandes', async (req, res) => {
 commandeRouter.get('/commandes/lignes', async (req, res) => {
     try {
         const connection = await getConnection()
-        const [rows] = await connection.query('SELECT c.id_commandes, c.date_time, c.prix_total, lc.id AS ligne_id, lc.id_produits, lc.quantite, p.nom AS produit_nom, p.reference_produit, p.prix_unitaire FROM commandes c LEFT JOIN lignes_commande lc ON c.id_commandes = lc.id_commandes LEFT JOIN produits p ON lc.id_produits = p.id_produits');
+        const [rows] = await connection.execute('SELECT c.id_commandes, c.date_time, c.prix_total, lc.id AS ligne_id, lc.id_produits, lc.quantite, p.nom AS produit_nom, p.reference_produit, p.prix_unitaire FROM commandes c LEFT JOIN lignes_commande lc ON c.id_commandes = lc.id_commandes LEFT JOIN produits p ON lc.id_produits = p.id_produits');
         await connection.end();
         res.json(rows)
     } catch (error) {
@@ -31,7 +31,7 @@ commandeRouter.post('/commandes', async (req, res) => {
     try {
         const connection = await getConnection()
         const {id_client, date_time, prix_total} = req.body;
-        const [result] = await connection.query(`INSERT INTO commandes(id_client, date_time, prix_total) VALUES ('${id_client}', '${date_time}', '${prix_total}')`);
+        const [result] = await connection.execute('INSERT INTO commandes(id_client, date_time, prix_total) VALUES (?, ?, ?)', [id_client, date_time, prix_total]);
         await connection.end();
         res.status(201).json({
             id: result.insertId,
@@ -49,7 +49,7 @@ commandeRouter.put('/commandes/:id_commandes', async(req, res) => {
         const connection = await getConnection()
         const {id_client, date_time, prix_total} = req.body;
         const {id_commandes} = req.params;
-        const [result] = await connection.query(`UPDATE commandes SET id_client = '${id_client}', date_time = '${date_time}', prix_total = '${prix_total}' WHERE id_commandes = '${id_commandes}'`);
+        const [result] = await connection.execute('UPDATE commandes SET id_client = ?, date_time = ?, prix_total = ? WHERE id_commandes = ?', [id_client, date_time, prix_total, id_commandes]);
         await connection.end();
         res.status(200).json({
             message: 'Commande mise à jour avec succès !'
@@ -65,7 +65,7 @@ commandeRouter.delete('/commandes/:id_commandes', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id_commandes} = req.params;
-        const [result] = await connection.query(`DELETE FROM commandes WHERE id_commandes = '${id_commandes}'`);
+        const [result] = await connection.execute('DELETE FROM commandes WHERE id_commandes = ?', [id_commandes]);
         await connection.end();
         res.status(200).json({
             message: 'Commande supprimé avec succès !'

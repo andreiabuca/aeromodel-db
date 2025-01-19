@@ -6,7 +6,7 @@ const fournisseurRouter = Router()
 fournisseurRouter.get('/fournisseur', async (req, res) => {
     try {
         const connection = await getConnection()
-        const [rows] = await connection.query('SELECT * FROM fournisseur');
+        const [rows] = await connection.execute('SELECT * FROM fournisseur');
         await connection.end();
         res.json(rows)
     } catch (error) {
@@ -19,7 +19,7 @@ fournisseurRouter.post('/fournisseur', async (req, res) => {
     try {
         const connection = await getConnection()
         const {nom} = req.body;
-        const [result] = await connection.query(`INSERT INTO fournisseur(nom) VALUES ('${nom}')`);
+        const [result] = await connection.execute('INSERT INTO fournisseur(nom) VALUES (?)', [nom]);
         await connection.end();
         res.status(201).json({
             id: result.insertId,
@@ -37,7 +37,7 @@ fournisseurRouter.put('/fournisseur/:id_fournisseur', async(req, res) => {
         const connection = await getConnection()
         const {nom} = req.body;
         const {id_fournisseur} = req.params;
-        const [result] = await connection.query(`UPDATE fournisseur SET nom = '${nom}' WHERE id_fournisseur = '${id_fournisseur}'`);
+        const [result] = await connection.execute('UPDATE fournisseur SET nom = ? WHERE id_fournisseur = ?', [nom, id_fournisseur]);
         await connection.end();
         res.status(200).json({
             message: 'Fournisseur mise à jour avec succès !'
@@ -53,7 +53,7 @@ fournisseurRouter.delete('/fournisseur/:id_fournisseur', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id_fournisseur} = req.params;
-        const [result] = await connection.query(`DELETE FROM fournisseur WHERE id_fournisseur = '${id_fournisseur}'`);
+        const [result] = await connection.execute('DELETE FROM fournisseur WHERE id_fournisseur = ?', [id_fournisseur]);
         await connection.end();
         res.status(200).json({
             message: 'Fournisseur supprimé avec succès !'

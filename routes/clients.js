@@ -6,7 +6,7 @@ const clientRouter = Router()
 clientRouter.get('/clients', async (req, res) => {
     try {
         const connection = await getConnection()
-        const [rows] = await connection.query('SELECT * FROM clients');
+        const [rows] = await connection.execute('SELECT * FROM clients');
         await connection.end();
         res.json(rows)
     } catch (error) {
@@ -18,7 +18,7 @@ clientRouter.get('/clients', async (req, res) => {
 clientRouter.get('/clients/commandes', async (req, res) => {
     try {
         const connection = await getConnection()
-        const [rows] = await connection.query('SELECT cl.id_client, cl.nom AS client_nom, cl.adress, cl.email, cl.telephone, co.id_commandes, co.date_time, co.prix_total FROM clients cl LEFT JOIN commandes co ON cl.id_client = co.id_client');
+        const [rows] = await connection.execute('SELECT cl.id_client, cl.nom AS client_nom, cl.adress, cl.email, cl.telephone, co.id_commandes, co.date_time, co.prix_total FROM clients cl LEFT JOIN commandes co ON cl.id_client = co.id_client');
         await connection.end();
         res.json(rows)
     } catch (error) {
@@ -31,7 +31,7 @@ clientRouter.post('/clients', async (req, res) => {
     try {
         const connection = await getConnection()
         const {nom, adress, email, telephone} = req.body;
-        const [result] = await connection.query(`INSERT INTO clients(nom, adress, email, telephone) VALUES ('${nom}', '${adress}', '${email}', '${telephone}`);
+        const [result] = await connection.execute('INSERT INTO clients(nom, adress, email, telephone) VALUES (?, ?, ?, ?)', [nom, adress, email, telephone]);
         await connection.end();
         res.status(201).json({
             id: result.insertId,
@@ -49,7 +49,7 @@ clientRouter.put('/clients/:id_client', async(req, res) => {
         const connection = await getConnection()
         const {nom, adress, email, telephone} = req.body;
         const {id_client} = req.params;
-        const [result] = await connection.query(`UPDATE clients SET nom = '${nom}', adress = '${adress}', email = '${email}', telephone = '${telephone}' WHERE id_client = ${id_client}`);
+        const [result] = await connection.execute(', UPDATE clients SET nom = ?, adress = ?, email = ?, telephone = ? WHERE id_client = ?', [nom, adress, email, telephone, id_client]);
         await connection.end();
         res.status(200).json({
             message: 'Client mise à jour avec succès !'
@@ -65,7 +65,7 @@ clientRouter.delete('/clients/:id_client', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id_client} = req.params;
-        const [result] = await connection.query(`DELETE FROM clients WHERE id_client = ${id_client}`);
+        const [result] = await connection.execute('DELETE FROM clients WHERE id_client = ?', [id_client]);
         await connection.end();
         res.status(200).json({
             message: 'Categories supprimé avec succès !'

@@ -6,7 +6,7 @@ const categorieRouter = Router()
 categorieRouter.get('/categories', async (req, res) => {
     try {
         const connection = await getConnection()
-        const [rows] = await connection.query('SELECT * FROM categories');
+        const [rows] = await connection.execute('SELECT * FROM categories');
         await connection.end();
         res.json(rows)
     } catch (error) {
@@ -19,7 +19,7 @@ categorieRouter.post('/categories', async (req, res) => {
     try {
         const connection = await getConnection()
         const {nom} = req.body;
-        const [result] = await connection.query(`INSERT INTO categories(nom) VALUES '${nom}'`);
+        const [result] = await connection.execute('INSERT INTO categories(nom) VALUES (?)', [nom]);
         await connection.end();
         res.status(201).json({
             id: result.insertId,
@@ -37,7 +37,7 @@ categorieRouter.put('/categories/:id', async(req, res) => {
         const connection = await getConnection()
         const {nom} = req.body;
         const {id} = req.params;
-        const [result] = await connection.query(`UPDATE categories SET nom = '${nom}' WHERE id = '${id}'`);
+        const [result] = await connection.execute('UPDATE categories SET nom = ? WHERE id = ?', [nom, id]);
         await connection.end();
         res.status(200).json({
             message: 'Categories mise à jour avec succès !'
@@ -53,7 +53,7 @@ categorieRouter.delete('/categories/:id', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id} = req.params;
-        const [result] = await connection.query(`DELETE FROM categories WHERE id = '${id}'`);
+        const [result] = await connection.execute('DELETE FROM categories WHERE id = ?', [id]);
         await connection.end();
         res.status(200).json({
             message: 'Categories supprimé avec succès !'

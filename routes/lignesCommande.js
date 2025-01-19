@@ -6,7 +6,7 @@ const lignesCommandeRouter = Router()
 lignesCommandeRouter.get('/lignesCommande', async (req, res) => {
     try {
         const connection = await getConnection()
-        const [rows] = await connection.query('SELECT * FROM lignes_commande');
+        const [rows] = await connection.execute('SELECT * FROM lignes_commande');
         await connection.end();
         res.json(rows)
     } catch (error) {
@@ -19,7 +19,7 @@ lignesCommandeRouter.post('/lignesCommande', async (req, res) => {
     try {
         const connection = await getConnection()
         const {id_produits, id_commandes, quantite} = req.body;
-        const [result] = await connection.query(`INSERT INTO lignes_commande(id_produits, id_commandes, quantite) VALUES ('${id_produits}', '${id_commandes}', '${quantite}')`);
+        const [result] = await connection.execute('INSERT INTO lignes_commande(id_produits, id_commandes, quantite) VALUES (?, ?, ?)', [id_produits, id_commandes, quantite]);
         await connection.end();
         res.status(201).json({
             id: result.insertId,
@@ -37,7 +37,7 @@ lignesCommandeRouter.put('/lignesCommande/:id', async(req, res) => {
         const connection = await getConnection()
         const {id_produits, id_commandes, quantite} = req.body;
         const {id} = req.params;
-        const [result] = await connection.query(`UPDATE lignes_commande SET id_produits = '${id_produits}', id_commandes = '${id_commandes}', quantite = '${quantite}' WHERE id = '${id}'`);
+        const [result] = await connection.execute('UPDATE lignes_commande SET id_produits = ?, id_commandes = ?, quantite = ? WHERE id = ?', [id_produits, id_commandes, quantite, id]);
         await connection.end();
         res.status(200).json({
             message: 'lignesCommande mise à jour avec succès !'
@@ -53,7 +53,7 @@ lignesCommandeRouter.delete('/lignesCommande/:id', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id} = req.params;
-        const [result] = await connection.query(`DELETE FROM lignes_commande WHERE id = '${id}'`);
+        const [result] = await connection.execute('DELETE FROM lignes_commande WHERE id = ?', [id]);
         await connection.end();
         res.status(200).json({
             message: 'lignesCommande supprimé avec succès !'
