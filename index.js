@@ -1,15 +1,15 @@
 //file pour gerer l'app
 const express = require('express')
 const bodyParser = require('body-parser')
-const categorieRouter = require('./routes/categories.js');
-const clientRouter = require('./routes/clients.js');
-const commandesRouter = require('./routes/commandes.js');
-const fournisseurRouter = require('./routes/fournisseurs.js');
-const produitRouter = require('./routes/produits.js');
-const lignesCommandeRouter = require('./routes/lignesCommande.js');
+const categorieRouter = require('./controller/categories.js');
+const clientRouter = require('./controller/clients.js');
+const commandesRouter = require('./controller/commandes.js');
+const fournisseurRouter = require('./controller/fournisseurs.js');
+const produitRouter = require('./controller/produits.js');
+const lignesCommandeRouter = require('./controller/lignesCommande.js');
 
 const app = express()
-const port = 3000
+const port = 3001
 
 app.use(bodyParser.json());
 app.use(categorieRouter);
