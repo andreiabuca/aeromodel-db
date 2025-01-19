@@ -53,7 +53,7 @@ categorieRouter.delete('/categories/:id', async(req,res) => {
     try {
         const connection = await getConnection()
         const {id} = req.params;
-        const [result] = await connection.query(`DELETE FROM categories WHERE id = '${nom}'`);
+        const [result] = await connection.query(`DELETE FROM categories WHERE id = '${id}'`);
         await connection.end();
         res.status(200).json({
             message: 'Categories supprimé avec succès !'
