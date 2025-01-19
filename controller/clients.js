@@ -17,6 +17,19 @@ clientRouter.get('/clients', async (req, res) => {
     }
 })
 
+clientRouter.get('/clients/:id_client', async (req, res) => {
+    try {
+        const connection = await getConnection()
+        const { id_client } = req.params;
+        const [rows] = await connection.execute('SELECT * FROM clients WHERE id_client = ?', [id_client]);
+        await connection.end();
+        res.json(rows)
+    } catch (error) {
+        console.error("Erreur lors de la récupération des clients :", error);
+        res.status(500).json({ error: "Erreur interne du serveur" });
+    }
+})
+
 clientRouter.get('/clients/commandes', async (req, res) => {
     try {
         const connection = await getConnection()
